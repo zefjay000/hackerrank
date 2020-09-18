@@ -1,0 +1,31 @@
+from company_scrape_save import ticker
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+from sqlalchemy import create_engine
+
+#for expos in ticker:
+    url = "https://finance.yahoo.com/quote/" + "GOOG" + "?p=" + "GOOG"
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+    my_table = soup.find("table", {"class": "W(100%)"})
+    data = my_table.findAll("td", {"Ta(end) Fw(600) Lh(14px)"})
+    my_table2 = soup.find("table", {"class": "W(100%) M(0) Bdcl(c)"})
+    data2 = my_table2.findAll("td", {"Ta(end) Fw(600) Lh(14px)"})
+
+    listy = []
+    for xrays in data:
+        listy.append(xrays.text)
+    listy = [item.strip() for item in listy]
+    #listy2= []
+    #for bluejays in data2:
+    #    listy2.append(bluejays.text)
+    #listy2= [item.strip("T") for item in listy2]
+    #listy3=(listy,listy2)
+    redsoxdf=pd.DataFrame()
+    redsoxdf["listy"]=listy
+    #print(redsoxdf)
+
+    #engine= create_engine('postgresql://postgres:password@localhost:5432/sp500')
+    #mariners.to_sql("COMPANY",engine)
