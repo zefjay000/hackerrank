@@ -1,0 +1,36 @@
+from company_scrape_save import ticker
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+from sqlalchemy import create_engine
+
+for mets in ticker:
+    url = "https://finance.yahoo.com/quote/" + mets + "?p=" + mets
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+    my_table = soup.find("table", {"class": "W(100%)"})
+    data = my_table.findAll("td", {"Ta(end) Fw(600) Lh(14px)"})
+#my_table2 = soup.find("table", {"class": "W(100%) M(0) Bdcl(c)"})
+#data2 = my_table2.findAll("td", {"Ta(end) Fw(600) Lh(14px)"})
+
+#print(data)
+
+    listy = []
+#listy.append(data.text)
+    for xrays in data:
+        listy.append(xrays.text)
+    listy = [item.strip() for item in listy]
+#listy=tuple(listy)
+#print(listy)
+
+
+previous_close= listy[0]
+#print(previous_close)
+previous_closedf=pd.DataFrame()
+previous_closedf["previous_close"]=previous_close
+#print(previous_closedf)
+
+
+engine= create_engine('postgresql://postgres:password@localhost:5432/sp500')
+#q.to_sql("SUMMARY_TWO",engine, if_exists="append")
